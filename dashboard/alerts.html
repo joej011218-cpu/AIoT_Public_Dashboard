@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>AIoT Air Quality — Alerts</title>
+
+<style>
+
+:root {
+
+  --bg: #12161A;
+  --panel: #1B2126;
+  --panel-border: #2A333A;
+
+  --text: #E8EDF0;
+  --text-muted: #8A97A0;
+
+  --good: #4E9F3D;
+  --satisfactory: #A8C43A;
+  --moderate: #E8C547;
+  --poor: #E8823C;
+  --very-poor: #D8453B;
+  --severe: #7A2A2A;
+
+  --mono:
+    'JetBrains Mono',
+    'SFMono-Regular',
+    Consolas,
+    monospace;
+
+  --sans:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+}
+
+
+[data-theme="light"] {
+
+  --bg: #F4F6F8;
+  --panel: #FFFFFF;
+  --panel-border: #DCE1E6;
+
+  --text: #1B2126;
+  --text-muted: #5C6670;
+}
+
+
+* {
+
+  box-sizing: border-box;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+body {
+
+  background: var(--bg);
+
+  color: var(--text);
+
+  font-family: var(--sans);
+
+  min-height: 100vh;
+
+  padding: 24px;
+}
+
+
+/* =========================================================
+   TOP BAR — ALIGNED WITH LIVE + ANALYTICS
+   ========================================================= */
+
+
+/* =========================================================
+   UNIFIED HEADER
+   ========================================================= */
+
+.topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title controls"
+    "nav nav";
+  align-items: center;
+  gap: 14px 20px;
+  margin-bottom: 18px;
+}
+
+.topbar h1 {
+  grid-area: title;
+  color: var(--text-muted);
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.site-nav {
+  grid-area: nav;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+}
+
+.site-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.site-nav a:hover {
+  color: var(--text);
+  border-color: var(--panel-border);
+}
+
+.site-nav a.active {
+  color: var(--text);
+  background: var(--bg);
+  border-color: var(--panel-border);
+}
+
+.topbar-right {
+  grid-area: controls;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.current-time {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: nowrap;
+  padding: 7px 10px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+}
+
+.current-time .clock-date {
+  color: var(--text-muted);
+  margin-right: 6px;
+}
+
+.theme-button,
+.theme-toggle {
+  background: var(--panel);
+  color: var(--text-muted);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.theme-button:hover,
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "controls"
+      "nav";
+    gap: 10px;
+  }
+
+  .topbar-right {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .site-nav {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 550px) {
+  .topbar h1 {
+    font-size: 16px;
+  }
+
+  .current-time {
+    font-size: 11px;
+  }
+
+  .site-nav a {
+    font-size: 11px;
+    padding: 7px 10px;
+  }
+}
+
+.summary-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 12px;
+
+  margin-bottom: 16px;
+}
+
+
+.summary-card {
+
+  background: var(--panel);
+
+  border: 1px solid var(--panel-border);
+
+  border-radius: 8px;
+
+  padding: 18px;
+}
+
+
+.summary-label {
+
+  color: var(--text-muted);
+
+  font-size: 11px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+
+  margin-bottom: 8px;
+}
+
+
+.summary-value {
+
+  font-family: var(--mono);
+
+  font-size: 28px;
+
+  font-weight: 700;
+}
+
+
+.summary-sub {
+
+  color: var(--text-muted);
+
+  font-family: var(--mono);
+
+  font-size: 10px;
+
+  margin-top: 6px;
+}
+
+
+/* =========================================================
+   ALERT TABLE
+   ========================================================= */
+
+.panel {
+
+  background: var(--panel);
+
+  border: 1px solid var(--panel-border);
+
+  border-radius: 8px;
+
+  overflow: hidden;
+}
+
+
+.panel-head {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid var(--panel-border);
+}
+
+
+.panel-title {
+
+  color: var(--text-muted);
+
+  font-size: 11px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+}
+
+
+.status-text {
+
+  color: var(--text-muted);
+
+  font-family: var(--mono);
+
+  font-size: 10px;
+}
+
+
+.table-wrap {
+
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 13px;
+}
+
+
+th,
+td {
+
+  text-align: left;
+
+  padding: 14px 16px;
+
+  border-bottom: 1px solid var(--panel-border);
+}
+
+
+th {
+
+  color: var(--text-muted);
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  font-size: 10px;
+
+  letter-spacing: 0.06em;
+
+  white-space: nowrap;
+}
+
+
+td {
+
+  font-family: var(--mono);
+}
+
+
+tbody tr:last-child td {
+
+  border-bottom: none;
+}
+
+
+tbody tr:hover {
+
+  background:
+    rgba(255,255,255,0.02);
+}
+
+
+[data-theme="light"] tbody tr:hover {
+
+  background:
+    rgba(0,0,0,0.025);
+}
+
+
+.aqi-cell {
+
+  font-weight: 800;
+}
+
+
+.stage-badge {
+
+  display: inline-block;
+
+  border-radius: 5px;
+
+  padding: 4px 8px;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  border: 1px solid currentColor;
+}
+
+
+.pollutant {
+
+  font-weight: 700;
+}
+
+
+.empty-state {
+
+  padding: 54px 20px;
+
+  text-align: center;
+
+  color: var(--text-muted);
+
+  font-family: var(--mono);
+
+  font-size: 12px;
+}
+
+
+.footer {
+
+  color: var(--text-muted);
+
+  font-family: var(--mono);
+
+  font-size: 10px;
+
+  text-align: center;
+
+  margin-top: 18px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+
+
+  .site-nav {
+
+    justify-content:
+      flex-start;
+
+    flex-wrap:
+      wrap;
+  }
+
+  .summary-grid {
+
+    grid-template-columns:
+      1fr;
+  }
+
+  .panel-head {
+
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+}
+
+
+@media (
+  max-width: 550px
+) {
+
+  body {
+
+    padding: 14px;
+  }
+
+  .topbar-right {
+
+    flex-wrap: wrap;
+  }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="topbar">
+
+  <h1>
+    AIoT Air Quality — Alerts
+  </h1>
+
+
+  <nav class="site-nav">
+
+    <a href="index.html">
+      Live
+    </a>
+
+    <a href="analytics.html">
+      Analytics
+    </a>
+
+    <a
+      href="alerts.html"
+      class="active"
+    >
+      Alerts
+    </a>
+
+    <a
+      href="https://joej011218-cpu.github.io/CPCB_Prediction/prediction.html"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="external"
+    >
+      CPCB Prediction ↗
+    </a>
+
+<a href="about.html">
+      About
+    </a>
+
+  </nav>
+
+
+  <div class="topbar-right">
+
+    <div
+      class="current-time"
+      id="currentTime"
+    >
+
+      <span
+        class="clock-date"
+        id="currentDate"
+      >
+        --
+      </span>
+
+      <span id="currentClock">
+        --:--:--
+      </span>
+
+    </div>
+
+
+    <button
+      class="theme-button"
+      id="themeButton"
+      onclick="toggleTheme()"
+    >
+      🌙 Dark
+    </button>
+
+  </div>
+
+</div>
+
+
+<div class="summary-grid">
+
+
+  <div
+    class="summary-card"
+    id="currentAlertCard"
+  >
+
+    <div class="summary-label">
+      Current AQI
+    </div>
+
+    <div
+      class="summary-value"
+      id="currentAQI"
+    >
+      --
+    </div>
+
+    <div
+      class="summary-sub"
+      id="currentAlertStatus"
+    >
+      Checking current status...
+    </div>
+
+  </div>
+
+
+  <div class="summary-card">
+
+    <div class="summary-label">
+      Total Alerts
+    </div>
+
+    <div
+      class="summary-value"
+      id="totalAlerts"
+    >
+      --
+    </div>
+
+    <div class="summary-sub">
+      AQI ≥ 201
+    </div>
+
+  </div>
+
+
+  <div class="summary-card">
+
+    <div class="summary-label">
+      Highest Alert AQI
+    </div>
+
+    <div
+      class="summary-value"
+      id="highestAQI"
+    >
+      --
+    </div>
+
+    <div
+      class="summary-sub"
+      id="highestCategory"
+    >
+      --
+    </div>
+
+  </div>
+
+
+  <div class="summary-card">
+
+    <div class="summary-label">
+      Latest Alert
+    </div>
+
+    <div
+      class="summary-value"
+      id="latestAlertAQI"
+    >
+      --
+    </div>
+
+    <div
+      class="summary-sub"
+      id="latestAlertTime"
+    >
+      No alerts logged
+    </div>
+
+  </div>
+
+
+</div>
+
+
+<div class="panel">
+
+  <div class="panel-head">
+
+    <div class="panel-title">
+      Poor, Very Poor & Severe AQI Events
+    </div>
+
+    <div
+      class="status-text"
+      id="alertStatus"
+    >
+      Loading...
+    </div>
+
+  </div>
+
+
+  <div
+    class="table-wrap"
+    id="tableWrap"
+  >
+
+    <table id="alertTable">
+
+      <thead>
+
+        <tr>
+
+          <th>Date</th>
+
+          <th>Time</th>
+
+          <th>Dominant Pollutant</th>
+
+          <th>AQI Stage</th>
+
+          <th>AQI</th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody id="alertBody">
+      </tbody>
+
+    </table>
+
+  </div>
+
+
+  <div
+    class="empty-state"
+    id="emptyState"
+    style="display:none;"
+  >
+    No historical alert events. Current AQI is below the alert threshold of 201.
+  </div>
+
+</div>
+
+
+<div class="footer">
+
+  Alerts are generated from stored Current AQI history.
+  An alert is shown when AQI reaches 201 or above,
+  corresponding to Poor, Very Poor, or Severe conditions.
+
+</div>
+
+
+<script>
+
+// ============================================================
+// CONFIG
+// ============================================================
+
+const NODE_ID =
+  'node1';
+
+
+const REFRESH_MS =
+  30 * 1000;
+
+
+// ============================================================
+// THEME
+// ============================================================
+
+function applyTheme(
+  theme
+) {
+
+  document
+    .documentElement
+    .setAttribute(
+      'data-theme',
+      theme
+    );
+
+
+  document
+    .getElementById(
+      'themeButton'
+    )
+    .textContent =
+    theme === 'light'
+      ? '☀️ Light'
+      : '🌙 Dark';
+
+
+  localStorage.setItem(
+    'aqi-dashboard-theme',
+    theme
+  );
+}
+
+
+function toggleTheme() {
+
+  const current =
+    document
+      .documentElement
+      .getAttribute(
+        'data-theme'
+      )
+      ||
+      'dark';
+
+
+  applyTheme(
+    current === 'light'
+      ? 'dark'
+      : 'light'
+  );
+}
+
+
+// ============================================================
+// CLOCK — SAME AS LIVE / ANALYTICS
+// ============================================================
+
+function updateCurrentTime() {
+
+  const now =
+    new Date();
+
+
+  document
+    .getElementById(
+      'currentDate'
+    )
+    .textContent =
+    new Intl.DateTimeFormat(
+      'en-GB',
+      {
+        timeZone:
+          'Asia/Kolkata',
+
+        day:
+          '2-digit',
+
+        month:
+          'short',
+
+        year:
+          'numeric'
+      }
+    )
+    .format(
+      now
+    );
+
+
+  document
+    .getElementById(
+      'currentClock'
+    )
+    .textContent =
+    new Intl.DateTimeFormat(
+      'en-US',
+      {
+        timeZone:
+          'Asia/Kolkata',
+
+        hour:
+          '2-digit',
+
+        minute:
+          '2-digit',
+
+        second:
+          '2-digit',
+
+        hour12:
+          true
+      }
+    )
+    .format(
+      now
+    );
+}
+
+
+// ============================================================
+// AQI HELPERS
+// ============================================================
+
+function categoryColor(
+  category,
+  aqi
+) {
+
+  const c =
+    String(
+      category || ''
+    )
+    .trim()
+    .toLowerCase();
+
+
+  if (
+    c === 'poor'
+  ) {
+
+    return 'var(--poor)';
+  }
+
+
+  if (
+    c === 'very poor'
+  ) {
+
+    return 'var(--very-poor)';
+  }
+
+
+  if (
+    c === 'severe'
+  ) {
+
+    return 'var(--severe)';
+  }
+
+
+  // Fallback to the numeric AQI.
+  if (
+    Number(aqi) <= 300
+  ) {
+
+    return 'var(--poor)';
+  }
+
+
+  if (
+    Number(aqi) <= 400
+  ) {
+
+    return 'var(--very-poor)';
+  }
+
+
+  return 'var(--severe)';
+}
+
+
+function categoryLabel(
+  row
+) {
+
+  if (
+    row.category
+  ) {
+
+    return row.category;
+  }
+
+
+  const aqi =
+    Number(
+      row.aqi
+    );
+
+
+  if (
+    aqi <= 300
+  ) {
+
+    return 'Poor';
+  }
+
+
+  if (
+    aqi <= 400
+  ) {
+
+    return 'Very Poor';
+  }
+
+
+  return 'Severe';
+}
+
+
+function normalizePollutantName(
+  value
+) {
+
+  if (!value) {
+
+    return '--';
+  }
+
+
+  const name =
+    String(value)
+      .toLowerCase();
+
+
+  if (
+    name === 'pm25'
+  ) {
+
+    return 'PM2.5';
+  }
+
+
+  if (
+    name === 'pm10'
+  ) {
+
+    return 'PM10';
+  }
+
+
+  if (
+    name === 'nh3'
+  ) {
+
+    return 'NH₃';
+  }
+
+
+  if (
+    name === 'co'
+  ) {
+
+    return 'CO';
+  }
+
+
+  return String(value)
+    .toUpperCase();
+}
+
+
+// ============================================================
+// TIMESTAMP
+// ============================================================
+
+function parseTimestamp(
+  value
+) {
+
+  if (!value) {
+
+    return null;
+  }
+
+
+  const date =
+    new Date(
+      value
+    );
+
+
+  return Number.isNaN(
+    date.getTime()
+  )
+    ? null
+    : date;
+}
+
+
+function formatDate(
+  date
+) {
+
+  if (!date) {
+
+    return '--';
+  }
+
+
+  return date
+    .toLocaleDateString(
+      'en-IN',
+      {
+        timeZone:
+          'Asia/Kolkata',
+
+        day:
+          '2-digit',
+
+        month:
+          'short',
+
+        year:
+          'numeric'
+      }
+    );
+}
+
+
+function formatTime(
+  date
+) {
+
+  if (!date) {
+
+    return '--';
+  }
+
+
+  return date
+    .toLocaleTimeString(
+      'en-IN',
+      {
+        timeZone:
+          'Asia/Kolkata',
+
+        hour:
+          '2-digit',
+
+        minute:
+          '2-digit',
+
+        second:
+          '2-digit',
+
+        hour12:
+          true
+      }
+    );
+}
+
+
+// ============================================================
+// SUMMARY
+// ============================================================
+
+function updateSummary(
+  rows
+) {
+
+  document
+    .getElementById(
+      'totalAlerts'
+    )
+    .textContent =
+    rows.length;
+
+
+  if (
+    rows.length === 0
+  ) {
+
+    document
+      .getElementById(
+        'highestAQI'
+      )
+      .textContent =
+      '--';
+
+
+    document
+      .getElementById(
+        'highestCategory'
+      )
+      .textContent =
+      '--';
+
+
+    document
+      .getElementById(
+        'latestAlertAQI'
+      )
+      .textContent =
+      '--';
+
+
+    document
+      .getElementById(
+        'latestAlertTime'
+      )
+      .textContent =
+      'No alerts logged';
+
+
+    return;
+  }
+
+
+  const highest =
+    rows.reduce(
+      (
+        current,
+        row
+      ) =>
+        Number(row.aqi)
+        >
+        Number(current.aqi)
+          ? row
+          : current,
+      rows[0]
+    );
+
+
+  document
+    .getElementById(
+      'highestAQI'
+    )
+    .textContent =
+    Math.round(
+      Number(
+        highest.aqi
+      )
+    );
+
+
+  document
+    .getElementById(
+      'highestCategory'
+    )
+    .textContent =
+    categoryLabel(
+      highest
+    );
+
+
+  const latest =
+    rows[0];
+
+
+  document
+    .getElementById(
+      'latestAlertAQI'
+    )
+    .textContent =
+    Math.round(
+      Number(
+        latest.aqi
+      )
+    );
+
+
+  const latestDate =
+    parseTimestamp(
+      latest.timestamp
+    );
+
+
+  document
+    .getElementById(
+      'latestAlertTime'
+    )
+    .textContent =
+    `${formatDate(latestDate)} · ${formatTime(latestDate)}`;
+}
+
+
+
+// ============================================================
+// CURRENT AQI / ACTIVE ALERT STATUS
+// ============================================================
+
+function currentAQICategory(
+  aqi
+) {
+
+  const value =
+    Number(
+      aqi
+    );
+
+
+  if (
+    Number.isNaN(
+      value
+    )
+  ) {
+
+    return 'Unavailable';
+  }
+
+
+  if (value <= 50) {
+    return 'Good';
+  }
+
+
+  if (value <= 100) {
+    return 'Satisfactory';
+  }
+
+
+  if (value <= 200) {
+    return 'Moderate';
+  }
+
+
+  if (value <= 300) {
+    return 'Poor';
+  }
+
+
+  if (value <= 400) {
+    return 'Very Poor';
+  }
+
+
+  return 'Severe';
+}
+
+
+function currentAQIColor(
+  aqi
+) {
+
+  const value =
+    Number(
+      aqi
+    );
+
+
+  if (
+    Number.isNaN(
+      value
+    )
+  ) {
+
+    return 'var(--text-muted)';
+  }
+
+
+  if (value <= 50) {
+    return 'var(--good)';
+  }
+
+
+  if (value <= 100) {
+    return 'var(--satisfactory)';
+  }
+
+
+  if (value <= 200) {
+    return 'var(--moderate)';
+  }
+
+
+  if (value <= 300) {
+    return 'var(--poor)';
+  }
+
+
+  if (value <= 400) {
+    return 'var(--very-poor)';
+  }
+
+
+  return 'var(--severe)';
+}
+
+
+async function loadCurrentAlertStatus() {
+
+  const aqiElement =
+    document.getElementById(
+      'currentAQI'
+    );
+
+
+  const statusElement =
+    document.getElementById(
+      'currentAlertStatus'
+    );
+
+
+  const card =
+    document.getElementById(
+      'currentAlertCard'
+    );
+
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/latest?node_id=${NODE_ID}&t=${Date.now()}`,
+        {
+          cache:
+            'no-store'
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        `HTTP ${response.status}`
+      );
+    }
+
+
+    const data =
+      await response.json();
+
+
+    const current =
+      data.current_aqi;
+
+
+    if (
+      !current
+      ||
+      !current.ready
+      ||
+      current.aqi === null
+      ||
+      current.aqi === undefined
+    ) {
+
+      aqiElement.textContent =
+        '--';
+
+
+      statusElement.textContent =
+        'Current AQI unavailable';
+
+
+      return;
+    }
+
+
+    const aqi =
+      Number(
+        current.aqi
+      );
+
+
+    const category =
+      current.category
+      ||
+      currentAQICategory(
+        aqi
+      );
+
+
+    const color =
+      currentAQIColor(
+        aqi
+      );
+
+
+    aqiElement.textContent =
+      Math.round(
+        aqi
+      );
+
+
+    aqiElement.style.color =
+      color;
+
+
+    card.style.borderColor =
+      color;
+
+
+    if (
+      aqi >= 201
+    ) {
+
+      statusElement.textContent =
+        `ACTIVE ALERT · ${category}`;
+
+
+      statusElement.style.color =
+        color;
+
+    }
+
+    else {
+
+      statusElement.textContent =
+        `No active alert · ${category}`;
+
+
+      statusElement.style.color =
+        'var(--text-muted)';
+
+    }
+
+  }
+
+  catch (error) {
+
+    console.error(
+      'Current alert status error:',
+      error
+    );
+
+
+    aqiElement.textContent =
+      '--';
+
+
+    statusElement.textContent =
+      'Backend unavailable';
+
+  }
+
+}
+
+
+// ============================================================
+// LOAD ALERTS
+// ============================================================
+
+async function loadAlerts() {
+
+  const body =
+    document.getElementById(
+      'alertBody'
+    );
+
+
+  const empty =
+    document.getElementById(
+      'emptyState'
+    );
+
+
+  const tableWrap =
+    document.getElementById(
+      'tableWrap'
+    );
+
+
+  const status =
+    document.getElementById(
+      'alertStatus'
+    );
+
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/alerts?node_id=${NODE_ID}&limit=200`,
+        {
+          cache:
+            'no-store'
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        `HTTP ${response.status}`
+      );
+
+    }
+
+
+    const rows =
+      await response.json();
+
+
+    body.innerHTML =
+      '';
+
+
+    if (
+      !Array.isArray(
+        rows
+      )
+      ||
+      rows.length === 0
+    ) {
+
+      tableWrap.style.display =
+        'none';
+
+
+      empty.style.display =
+        'block';
+
+
+      status.textContent =
+        '0 stored alerts';
+
+
+      updateSummary(
+        []
+      );
+
+
+      return;
+    }
+
+
+    tableWrap.style.display =
+      'block';
+
+
+    empty.style.display =
+      'none';
+
+
+    status.textContent =
+      `${rows.length} stored alert${rows.length === 1 ? '' : 's'}`;
+
+
+    updateSummary(
+      rows
+    );
+
+
+    rows.forEach(
+      row => {
+
+        const date =
+          parseTimestamp(
+            row.timestamp
+          );
+
+
+        const category =
+          categoryLabel(
+            row
+          );
+
+
+        const color =
+          categoryColor(
+            category,
+            row.aqi
+          );
+
+
+        const tr =
+          document.createElement(
+            'tr'
+          );
+
+
+        tr.innerHTML =
+          `
+            <td>
+              ${formatDate(date)}
+            </td>
+
+            <td>
+              ${formatTime(date)}
+            </td>
+
+            <td class="pollutant">
+              ${normalizePollutantName(row.dominant_pollutant)}
+            </td>
+
+            <td>
+              <span
+                class="stage-badge"
+                style="color:${color};"
+              >
+                ${category}
+              </span>
+            </td>
+
+            <td
+              class="aqi-cell"
+              style="color:${color};"
+            >
+              ${Math.round(Number(row.aqi))}
+            </td>
+          `;
+
+
+        body.appendChild(
+          tr
+        );
+
+      }
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      'Alerts load error:',
+      error
+    );
+
+
+    tableWrap.style.display =
+      'none';
+
+
+    empty.style.display =
+      'block';
+
+
+    empty.textContent =
+      'Could not reach the backend alerts API.';
+
+
+    status.textContent =
+      'Backend connection error';
+
+
+    updateSummary(
+      []
+    );
+
+  }
+
+}
+
+
+// ============================================================
+// START
+// ============================================================
+
+applyTheme(
+  localStorage.getItem(
+    'aqi-dashboard-theme'
+  )
+  ||
+  'dark'
+);
+
+
+updateCurrentTime();
+
+
+setInterval(
+  updateCurrentTime,
+  1000
+);
+
+
+loadCurrentAlertStatus();
+
+loadAlerts();
+
+
+setInterval(
+  () => {
+
+    loadCurrentAlertStatus();
+
+    loadAlerts();
+
+  },
+  REFRESH_MS
+);
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>AIoT Air Quality — About</title>
+
+<style>
+
+:root {
+
+  --bg: #12161A;
+  --panel: #1B2126;
+  --panel-border: #2A333A;
+
+  --text: #E8EDF0;
+  --text-muted: #8A97A0;
+
+  --mono:
+    'JetBrains Mono',
+    'SFMono-Regular',
+    Consolas,
+    monospace;
+
+  --sans:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+
+  --good: #4E9F3D;
+  --satisfactory: #A8C43A;
+  --moderate: #E8C547;
+  --poor: #E8823C;
+  --very-poor: #D8453B;
+  --severe: #7A2A2A;
+}
+
+
+[data-theme="light"] {
+
+  --bg: #F4F6F8;
+  --panel: #FFFFFF;
+  --panel-border: #DCE1E6;
+
+  --text: #1B2126;
+  --text-muted: #5C6670;
+}
+
+
+* {
+
+  box-sizing: border-box;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+body {
+
+  background: var(--bg);
+
+  color: var(--text);
+
+  font-family: var(--sans);
+
+  min-height: 100vh;
+
+  padding: 24px;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+/* =========================================================
+   UNIFIED HEADER
+   ========================================================= */
+
+.topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title controls"
+    "nav nav";
+  align-items: center;
+  gap: 14px 20px;
+  margin-bottom: 18px;
+}
+
+.topbar h1 {
+  grid-area: title;
+  color: var(--text-muted);
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.site-nav {
+  grid-area: nav;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+}
+
+.site-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.site-nav a:hover {
+  color: var(--text);
+  border-color: var(--panel-border);
+}
+
+.site-nav a.active {
+  color: var(--text);
+  background: var(--bg);
+  border-color: var(--panel-border);
+}
+
+.topbar-right {
+  grid-area: controls;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.current-time {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: nowrap;
+  padding: 7px 10px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+}
+
+.current-time .clock-date {
+  color: var(--text-muted);
+  margin-right: 6px;
+}
+
+.theme-button,
+.theme-toggle {
+  background: var(--panel);
+  color: var(--text-muted);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.theme-button:hover,
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "controls"
+      "nav";
+    gap: 10px;
+  }
+
+  .topbar-right {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .site-nav {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 550px) {
+  .topbar h1 {
+    font-size: 16px;
+  }
+
+  .current-time {
+    font-size: 11px;
+  }
+
+  .site-nav a {
+    font-size: 11px;
+    padding: 7px 10px;
+  }
+}
+
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content {
+
+  max-width: 980px;
+
+  margin: 0 auto;
+}
+
+
+.panel {
+
+  background: var(--panel);
+
+  border: 1px solid var(--panel-border);
+
+  border-radius: 8px;
+
+  padding: 24px;
+
+  margin-bottom: 16px;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.panel h2 {
+
+  color: var(--text-muted);
+
+  font-size: 13px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+
+  margin-bottom: 14px;
+}
+
+
+.panel h3 {
+
+  color: var(--text-muted);
+
+  font-size: 12px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.06em;
+
+  margin-bottom: 8px;
+}
+
+
+.panel p {
+
+  font-size: 14px;
+
+  line-height: 1.7;
+
+  margin-bottom: 12px;
+}
+
+
+.panel p:last-child {
+
+  margin-bottom: 0;
+}
+
+
+strong {
+
+  color: var(--text);
+
+}
+
+
+code {
+
+  font-family: var(--mono);
+
+  background: var(--bg);
+
+  padding: 2px 6px;
+
+  border-radius: 4px;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+.info-table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 13px;
+}
+
+
+.info-table th,
+.info-table td {
+
+  text-align: left;
+
+  padding: 10px 12px;
+
+  border-bottom: 1px solid var(--panel-border);
+
+  vertical-align: top;
+
+  line-height: 1.55;
+}
+
+
+.info-table th {
+
+  color: var(--text-muted);
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  font-size: 10px;
+
+  letter-spacing: 0.05em;
+}
+
+
+.info-table td:first-child {
+
+  font-family: var(--mono);
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   FLOW / ARCHITECTURE
+   ========================================================= */
+
+.architecture {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 10px;
+
+  margin-top: 16px;
+}
+
+
+.arch-card {
+
+  background: var(--bg);
+
+  border: 1px solid var(--panel-border);
+
+  border-radius: 8px;
+
+  padding: 16px;
+
+  text-align: center;
+}
+
+
+.arch-number {
+
+  color: var(--text-muted);
+
+  font-family: var(--mono);
+
+  font-size: 10px;
+
+  margin-bottom: 8px;
+}
+
+
+.arch-title {
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+
+.arch-text {
+
+  color: var(--text-muted);
+
+  font-family: var(--mono);
+
+  font-size: 10px;
+
+  line-height: 1.6;
+}
+
+
+.flow-line {
+
+  color: var(--text-muted);
+
+  font-family: var(--mono);
+
+  font-size: 12px;
+
+  text-align: center;
+
+  margin: 14px 0 4px;
+}
+
+
+/* =========================================================
+   DATA SOURCE CARDS
+   ========================================================= */
+
+.source-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 14px;
+}
+
+
+.source-card {
+
+  background: var(--bg);
+
+  border: 1px solid var(--panel-border);
+
+  border-radius: 8px;
+
+  padding: 18px;
+}
+
+
+.source-card h3 {
+
+  margin-bottom: 10px;
+}
+
+
+.source-card ul {
+
+  padding-left: 18px;
+
+  font-size: 13px;
+
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   AQI SCALE
+   ========================================================= */
+
+.category-scale {
+
+  display: flex;
+
+  border-radius: 6px;
+
+  overflow: hidden;
+
+  margin: 14px 0;
+
+  min-height: 40px;
+}
+
+
+.category-scale > div {
+
+  flex: 1;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 6px;
+
+  font-family: var(--mono);
+
+  font-size: 9px;
+
+  color: #12161A;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   PAGE ROLE GRID
+   ========================================================= */
+
+.page-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 12px;
+}
+
+
+.page-card {
+
+  background: var(--bg);
+
+  border: 1px solid var(--panel-border);
+
+  border-radius: 8px;
+
+  padding: 17px;
+}
+
+
+.page-card h3 {
+
+  margin-bottom: 8px;
+}
+
+
+.page-card p {
+
+  color: var(--text-muted);
+
+  font-family: var(--mono);
+
+  font-size: 11px;
+
+  line-height: 1.65;
+
+  margin: 0;
+}
+
+
+/* =========================================================
+   NOTICE BOXES
+   ========================================================= */
+
+.notice {
+
+  background: var(--bg);
+
+  border: 1px solid var(--panel-border);
+
+  border-left: 4px solid var(--moderate);
+
+  border-radius: 8px;
+
+  padding: 16px;
+
+  margin-top: 14px;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+
+.notice.warning {
+
+  border-left-color: var(--poor);
+}
+
+
+.notice.good {
+
+  border-left-color: var(--good);
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+
+  color: var(--text-muted);
+
+  font-family: var(--mono);
+
+  font-size: 10px;
+
+  text-align: center;
+
+  margin-top: 20px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (
+  max-width: 900px
+) {
+
+  .topbar {
+
+    grid-template-columns: 1fr;
+
+    grid-template-areas:
+      "title"
+      "controls"
+      "nav";
+  }
+
+
+  .topbar-right {
+
+    justify-content: flex-start;
+
+    flex-wrap: wrap;
+  }
+
+
+  .site-nav {
+
+    justify-content: flex-start;
+  }
+
+
+  .architecture {
+
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+@media (
+  max-width: 700px
+) {
+
+  body {
+
+    padding: 14px;
+  }
+
+
+  .source-grid,
+  .page-grid,
+  .architecture {
+
+    grid-template-columns: 1fr;
+  }
+
+
+  .category-scale {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+
+/* =========================================================
+   NAVIGATION ALIGNMENT
+   Match Live / Analytics / Alerts
+   ========================================================= */
+
+.site-nav {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="topbar">
+
+  <h1>
+    AIoT Air Quality — About
+  </h1>
+
+
+  <nav class="site-nav">
+
+    <a href="index.html">
+      Live
+    </a>
+
+    <a href="analytics.html">
+      Analytics
+    </a>
+
+    <a href="alerts.html">
+      Alerts
+    </a>
+
+    <a
+      href="https://joej011218-cpu.github.io/CPCB_Prediction/prediction.html"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="external"
+    >
+      CPCB Prediction ↗
+    </a>
+
+    <a
+      href="about.html"
+      class="active"
+    >
+      About
+    </a>
+
+  </nav>
+
+
+  <div class="topbar-right">
+
+    <div
+      class="current-time"
+      id="currentTime"
+    >
+
+      <span
+        class="clock-date"
+        id="currentDate"
+      >
+        --
+      </span>
+
+      <span id="currentClock">
+        --:--:--
+      </span>
+
+    </div>
+
+
+    <button
+      class="theme-button"
+      id="themeButton"
+      onclick="toggleTheme()"
+    >
+      🌙 Dark
+    </button>
+
+  </div>
+
+</div>
+
+
+<div class="content">
+
+
+  <!-- =====================================================
+       WHAT THE SYSTEM DOES
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      What this system does
+    </h2>
+
+    <p>
+      This project is a low-cost
+      <strong>AIoT air-quality monitoring system</strong>
+      built around an ESP32 sensor node, an MQTT communication
+      layer, a Flask backend, a local sensor database, and a
+      cloud-hosted CPCB air-quality database.
+    </p>
+
+    <p>
+      The monitoring dashboard combines
+      <strong>PM2.5 and PM10 from the Vadodara CPCB data source</strong>
+      with
+      <strong>CO and NH₃ measured by the ESP32 node</strong>.
+      Temperature and humidity are also measured locally using
+      DHT11 to provide environmental context.
+    </p>
+
+    <p>
+      The dashboard is focused on
+      <strong>real-time monitoring, historical analytics, and alerts</strong>.
+      AQI forecasting is kept in a separate CPCB prediction dashboard
+      so that monitoring and machine-learning prediction remain clearly
+      separated.
+    </p>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       CPCB AQI CATEGORIES & PRECAUTIONS
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      CPCB AQI Categories & Precautions
+    </h2>
+
+    <p>
+      The dashboard uses six AQI categories from Good to Severe.
+      The table below explains the AQI range, likely health impact,
+      and practical precautions associated with each category.
+    </p>
+
+    <div style="overflow-x:auto;">
+
+      <table class="info-table">
+
+        <tr>
+          <th>Category</th>
+          <th>AQI Range</th>
+          <th>Health Impact</th>
+          <th>Practical Precautions</th>
+        </tr>
+
+        <tr>
+          <td style="color:var(--good);font-weight:700;">
+            Good
+          </td>
+          <td>0–50</td>
+          <td>
+            Minimal impact. Air quality is considered good for
+            normal daily activities.
+          </td>
+          <td>
+            Normal outdoor activities can continue. Outdoor exercise
+            and recreation can continue as usual.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="color:var(--satisfactory);font-weight:700;">
+            Satisfactory
+          </td>
+          <td>51–100</td>
+          <td>
+            Air quality is generally acceptable. Sensitive people
+            may experience minor breathing discomfort.
+          </td>
+          <td>
+            Normal activities can continue for most people. Sensitive
+            people should monitor for breathing discomfort and reduce
+            prolonged or strenuous outdoor exertion if discomfort occurs.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="color:var(--moderate);font-weight:700;">
+            Moderate
+          </td>
+          <td>101–200</td>
+          <td>
+            Breathing discomfort may occur in people with lung,
+            asthma, or heart conditions, especially during prolonged
+            exposure.
+          </td>
+          <td>
+            Sensitive groups should consider reducing prolonged or
+            strenuous outdoor activity, take additional breaks, and
+            move indoors if breathing discomfort occurs.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="color:var(--poor);font-weight:700;">
+            Poor
+          </td>
+          <td>201–300</td>
+          <td>
+            Prolonged exposure may cause breathing discomfort,
+            particularly for people with respiratory or heart conditions.
+          </td>
+          <td>
+            Reduce prolonged or strenuous outdoor physical activity.
+            Sensitive groups should minimize outdoor exertion and consider
+            moving strenuous activities indoors.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="color:var(--very-poor);font-weight:700;">
+            Very Poor
+          </td>
+          <td>301–400</td>
+          <td>
+            Prolonged exposure can cause respiratory illness or
+            significant breathing discomfort.
+          </td>
+          <td>
+            Avoid strenuous outdoor physical activity. Sensitive groups
+            should remain indoors as much as practical and keep outdoor
+            exposure as short as reasonably possible.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="color:var(--severe);font-weight:700;">
+            Severe
+          </td>
+          <td>401–500</td>
+          <td>
+            Air quality may affect healthy people and can seriously
+            affect people with existing respiratory or cardiovascular
+            conditions.
+          </td>
+          <td>
+            Avoid outdoor physical activity where possible. Minimize
+            outdoor exposure, especially for sensitive groups, and move
+            strenuous activities indoors.
+          </td>
+        </tr>
+
+      </table>
+
+    </div>
+
+    <div class="notice" style="margin-top:16px;">
+      <strong>Note:</strong>
+      AQI ranges follow the CPCB category structure used by the dashboard.
+      Precaution text is general guidance and is not individualized
+      medical advice.
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       CURRENT HARDWARE
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      Current hardware
+    </h2>
+
+
+    <table class="info-table">
+
+      <tr>
+
+        <th>
+          Component
+        </th>
+
+        <th>
+          Purpose
+        </th>
+
+        <th>
+          Current use
+        </th>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          ESP32 DevKitC
+        </td>
+
+        <td>
+          IoT controller
+        </td>
+
+        <td>
+          Reads the local sensors, averages measurements,
+          connects to Wi-Fi, and publishes JSON data using MQTT.
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          MQ-7
+        </td>
+
+        <td>
+          Carbon monoxide
+        </td>
+
+        <td>
+          Provides the project's estimated CO concentration in
+          mg/m³.
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          MQ-135
+        </td>
+
+        <td>
+          Ammonia response
+        </td>
+
+        <td>
+          Provides the project's estimated NH₃ concentration in
+          µg/m³.
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          DHT11
+        </td>
+
+        <td>
+          Temperature & humidity
+        </td>
+
+        <td>
+          Supplies environmental measurements for monitoring
+          and interpretation. These values are not AQI pollutants.
+        </td>
+
+      </tr>
+
+
+    </table>
+
+
+    <div class="notice">
+
+      <strong>Important change from the earlier design:</strong>
+      the current system does not use a PMS5003/PMS7003 particulate
+      sensor in the deployed node. PM2.5 and PM10 are obtained from
+      the Vadodara CPCB data source instead.
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       DATA SOURCES
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      Where the data comes from
+    </h2>
+
+
+    <div class="source-grid">
+
+
+      <div class="source-card">
+
+        <h3>
+          CPCB / Render PostgreSQL
+        </h3>
+
+        <ul>
+
+          <li>
+            PM2.5
+          </li>
+
+          <li>
+            PM10
+          </li>
+
+          <li>
+            Vadodara air-quality records
+          </li>
+
+          <li>
+            Cloud-hosted PostgreSQL database on Render
+          </li>
+
+        </ul>
+
+      </div>
+
+
+      <div class="source-card">
+
+        <h3>
+          ESP32 sensor node
+        </h3>
+
+        <ul>
+
+          <li>
+            CO — MQ-7
+          </li>
+
+          <li>
+            NH₃ — MQ-135
+          </li>
+
+          <li>
+            Temperature — DHT11
+          </li>
+
+          <li>
+            Humidity — DHT11
+          </li>
+
+        </ul>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       SYSTEM ARCHITECTURE
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      How the system works
+    </h2>
+
+
+    <div class="architecture">
+
+
+      <div class="arch-card">
+
+        <div class="arch-number">
+          STEP 1
+        </div>
+
+        <div class="arch-title">
+          ESP32 Sensing
+        </div>
+
+        <div class="arch-text">
+          MQ-7 + MQ-135 + DHT11
+          <br>
+          15-minute averages
+        </div>
+
+      </div>
+
+
+      <div class="arch-card">
+
+        <div class="arch-number">
+          STEP 2
+        </div>
+
+        <div class="arch-title">
+          MQTT
+        </div>
+
+        <div class="arch-text">
+          HiveMQ broker
+          <br>
+          aqi/node1/readings
+        </div>
+
+      </div>
+
+
+      <div class="arch-card">
+
+        <div class="arch-number">
+          STEP 3
+        </div>
+
+        <div class="arch-title">
+          Flask Backend
+        </div>
+
+        <div class="arch-text">
+          Receives sensor data
+          <br>
+          Reads CPCB data
+          <br>
+          Calculates Current AQI
+        </div>
+
+      </div>
+
+
+      <div class="arch-card">
+
+        <div class="arch-number">
+          STEP 4
+        </div>
+
+        <div class="arch-title">
+          Dashboard
+        </div>
+
+        <div class="arch-text">
+          Live
+          <br>
+          Analytics
+          <br>
+          Alerts
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="flow-line">
+      ESP32 → HiveMQ → Flask → SQLite / Render PostgreSQL → Dashboard
+    </div>
+
+
+    <p style="margin-top:16px;">
+
+      Sensor measurements are published by the ESP32 through the public
+      HiveMQ MQTT broker. The Flask backend subscribes to the MQTT topic
+      and stores sensor readings in the local SQLite database.
+      PM2.5 and PM10 are read from the existing
+      <strong>Render PostgreSQL CPCB database</strong>.
+
+    </p>
+
+
+    <p>
+
+      In the current local deployment, the Flask backend must be running
+      for MQTT sensor messages to be received and stored. The ESP32 itself
+      can operate from an independent power source after the firmware has
+      been uploaded.
+
+    </p>
+
+  </div>
+
+
+  <!-- =====================================================
+       CURRENT AQI
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      How Current AQI is calculated
+    </h2>
+
+
+    <p>
+
+      The Live dashboard uses the latest available values for four
+      pollutants:
+
+    </p>
+
+
+    <table class="info-table">
+
+      <tr>
+
+        <th>
+          Pollutant
+        </th>
+
+        <th>
+          Source
+        </th>
+
+        <th>
+          Unit
+        </th>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          PM2.5
+        </td>
+
+        <td>
+          Vadodara CPCB / Render PostgreSQL
+        </td>
+
+        <td>
+          µg/m³
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          PM10
+        </td>
+
+        <td>
+          Vadodara CPCB / Render PostgreSQL
+        </td>
+
+        <td>
+          µg/m³
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          CO
+        </td>
+
+        <td>
+          ESP32 MQ-7
+        </td>
+
+        <td>
+          mg/m³
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          NH₃
+        </td>
+
+        <td>
+          ESP32 MQ-135
+        </td>
+
+        <td>
+          µg/m³
+        </td>
+
+      </tr>
+
+
+    </table>
+
+
+    <p style="margin-top:16px;">
+
+      Each pollutant is converted to an AQI sub-index using the project's
+      CPCB breakpoint implementation. The displayed Current AQI is the
+      <strong>highest of the four available sub-indices</strong>.
+      The pollutant producing that maximum value is shown as the
+      dominant pollutant.
+
+    </p>
+
+    <div class="notice warning">
+
+      <strong>Important:</strong>
+      the dashboard's Current AQI is a project
+      <strong>real-time four-pollutant indicator</strong>.
+      Official CPCB AQI uses prescribed pollutant averaging periods
+      and regulatory monitoring procedures. Therefore this dashboard
+      should not be presented as an official CPCB station AQI.
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       DASHBOARD PAGES
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      What each dashboard page shows
+    </h2>
+
+
+    <div class="page-grid">
+
+
+      <div class="page-card">
+
+        <h3>
+          Live
+        </h3>
+
+        <p>
+          Shows the latest Current AQI, PM2.5, PM10,
+          CO, NH₃, temperature, and humidity.
+        </p>
+
+      </div>
+
+
+      <div class="page-card">
+
+        <h3>
+          Analytics
+        </h3>
+
+        <p>
+          Shows Current AQI history and pollutant trends.
+          PM2.5/PM10 come from CPCB; CO/NH₃ come from
+          the ESP32 sensor database.
+        </p>
+
+      </div>
+
+
+      <div class="page-card">
+
+        <h3>
+          Alerts
+        </h3>
+
+        <p>
+          Uses stored Current AQI history.
+          Poor, Very Poor, and Severe conditions
+          begin at AQI 201 and above.
+        </p>
+
+      </div>
+
+
+      <div class="page-card">
+
+        <h3>
+          CPCB Prediction ↗
+        </h3>
+
+        <p>
+          Opens the separate Vadodara CPCB machine-learning
+          prediction dashboard. Forecasting is intentionally
+          kept separate from this monitoring dashboard.
+        </p>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       ANALYTICS & ALERTS
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      Analytics and alert history
+    </h2>
+
+
+    <p>
+
+      Each new 15-minute ESP32 reading can be paired with the latest
+      CPCB PM2.5 and PM10 values to calculate a Current AQI snapshot.
+      Those Current AQI snapshots are stored separately from the older
+      rolling/hybrid AQI history.
+
+    </p>
+
+
+    <table class="info-table">
+
+      <tr>
+
+        <th>
+          Dashboard item
+        </th>
+
+        <th>
+          Source
+        </th>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          AQI trend
+        </td>
+
+        <td>
+          Stored Current AQI snapshots
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          PM2.5 trend
+        </td>
+
+        <td>
+          Render PostgreSQL CPCB history
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          PM10 trend
+        </td>
+
+        <td>
+          Render PostgreSQL CPCB history
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          CO trend
+        </td>
+
+        <td>
+          Local ESP32 / SQLite history
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          NH₃ trend
+        </td>
+
+        <td>
+          Local ESP32 / SQLite history
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          Alerts
+        </td>
+
+        <td>
+          Stored Current AQI records with AQI ≥ 201
+        </td>
+
+      </tr>
+
+
+    </table>
+
+  </div>
+
+
+  <!-- =====================================================
+       PREDICTION SYSTEM
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      Separate CPCB AQI prediction system
+    </h2>
+
+
+    <p>
+
+      AQI prediction is handled by a
+      <strong>separate Vadodara CPCB prediction dashboard</strong>.
+      It uses historical CPCB pollutant data and the trained
+      machine-learning forecasting models rather than mixing the
+      prediction workflow into the portable sensor dashboard.
+
+    </p>
+
+
+    <p>
+
+      This separation keeps the system easier to explain:
+      the AIoT dashboard demonstrates
+      <strong>monitoring, communication, analytics, and alerts</strong>,
+      while the CPCB dashboard demonstrates
+      <strong>Vadodara AQI forecasting</strong>.
+
+    </p>
+
+
+    <div class="notice good">
+
+      Navigation to the prediction system is provided through
+      <strong>CPCB Prediction ↗</strong> in the top menu.
+      It opens the separate Vadodara CPCB prediction dashboard in a new tab.
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       LOCATION / SEMINAR
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      Location and seminar demonstration
+    </h2>
+
+
+    <p>
+
+      The integrated monitoring setup was designed around
+      <strong>Vadodara CPCB PM data</strong> together with local
+      ESP32 CO and NH₃ measurements. For a scientifically meaningful
+      combined AQI, the pollutant sources should represent the same
+      monitoring area and time period.
+
+    </p>
+
+
+    <p>
+
+      If the ESP32 node is later operated in Myanmar for the seminar,
+      it can still demonstrate
+      <strong>live sensing, Wi-Fi, MQTT communication, CO, NH₃,
+      temperature, and humidity</strong>.
+      However, Myanmar sensor readings should not be combined with
+      Vadodara CPCB PM2.5/PM10 and presented as one location's AQI.
+
+    </p>
+
+
+    <div class="notice">
+
+      For the seminar, stored Vadodara monitoring results and the
+      Vadodara CPCB prediction dashboard can be presented as the
+      project results, while the physical ESP32 can be demonstrated
+      separately as the portable IoT node.
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       LIMITATIONS
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      Measurement limitations
+    </h2>
+
+
+    <p>
+
+      The MQ-7 and MQ-135 are low-cost semiconductor gas sensors.
+      Their readings can be influenced by calibration, heater
+      conditions, power supply, temperature, humidity, airflow,
+      sensor aging, and cross-sensitivity to other gases.
+
+    </p>
+
+
+    <p>
+
+      For this reason, CO and NH₃ values from the node should be
+      presented as
+      <strong>low-cost sensor estimates used for the project
+      prototype</strong>, not as regulatory-grade measurements.
+
+    </p>
+
+
+    <p>
+
+      The project also does not locally measure NO₂, SO₂, O₃,
+      or lead. The monitoring dashboard intentionally focuses on
+      the four pollutants available in the integrated setup:
+      PM2.5, PM10, CO, and NH₃.
+
+    </p>
+
+  </div>
+
+
+  <!-- =====================================================
+       PROJECT SUMMARY
+       ===================================================== -->
+
+  <div class="panel">
+
+    <h2>
+      Project summary
+    </h2>
+
+
+    <table class="info-table">
+
+      <tr>
+
+        <th>
+          Layer
+        </th>
+
+        <th>
+          Current implementation
+        </th>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          Hardware
+        </td>
+
+        <td>
+          ESP32 + MQ-7 + MQ-135 + DHT11
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          Communication
+        </td>
+
+        <td>
+          Wi-Fi + MQTT through HiveMQ
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          Sensor storage
+        </td>
+
+        <td>
+          Local SQLite database
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          CPCB storage
+        </td>
+
+        <td>
+          Render PostgreSQL
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          Backend
+        </td>
+
+        <td>
+          Python Flask
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          Live AQI
+        </td>
+
+        <td>
+          PM2.5 + PM10 + CO + NH₃ Current AQI
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          Monitoring pages
+        </td>
+
+        <td>
+          Live + Analytics + Alerts + About
+        </td>
+
+      </tr>
+
+
+      <tr>
+
+        <td>
+          Prediction
+        </td>
+
+        <td>
+          Separate Vadodara CPCB machine-learning dashboard
+        </td>
+
+      </tr>
+
+
+    </table>
+
+  </div>
+
+
+</div>
+
+
+<div class="footer">
+
+  AIoT Air Quality Monitoring System ·
+  PM2.5/PM10 from CPCB ·
+  CO/NH₃ from ESP32 ·
+  Temperature/Humidity from DHT11
+
+</div>
+
+
+<script>
+
+// ============================================================
+// THEME
+// ============================================================
+
+function applyTheme(
+  theme
+) {
+
+  document
+    .documentElement
+    .setAttribute(
+      'data-theme',
+      theme
+    );
+
+
+  document
+    .getElementById(
+      'themeButton'
+    )
+    .textContent =
+    theme === 'light'
+      ? '☀️ Light'
+      : '🌙 Dark';
+
+
+  localStorage.setItem(
+    'aqi-dashboard-theme',
+    theme
+  );
+
+}
+
+
+function toggleTheme() {
+
+  const current =
+    document
+      .documentElement
+      .getAttribute(
+        'data-theme'
+      )
+      ||
+      'dark';
+
+
+  applyTheme(
+    current === 'light'
+      ? 'dark'
+      : 'light'
+  );
+
+}
+
+
+// ============================================================
+// INDIA CLOCK
+// ============================================================
+
+function updateCurrentTime() {
+
+  const now =
+    new Date();
+
+
+  document
+    .getElementById(
+      'currentDate'
+    )
+    .textContent =
+    new Intl.DateTimeFormat(
+      'en-GB',
+      {
+        timeZone:
+          'Asia/Kolkata',
+
+        day:
+          '2-digit',
+
+        month:
+          'short',
+
+        year:
+          'numeric'
+      }
+    )
+    .format(
+      now
+    );
+
+
+  document
+    .getElementById(
+      'currentClock'
+    )
+    .textContent =
+    new Intl.DateTimeFormat(
+      'en-US',
+      {
+        timeZone:
+          'Asia/Kolkata',
+
+        hour:
+          '2-digit',
+
+        minute:
+          '2-digit',
+
+        second:
+          '2-digit',
+
+        hour12:
+          true
+      }
+    )
+    .format(
+      now
+    );
+
+}
+
+
+// ============================================================
+// START
+// ============================================================
+
+applyTheme(
+  localStorage.getItem(
+    'aqi-dashboard-theme'
+  )
+  ||
+  'dark'
+);
+
+
+updateCurrentTime();
+
+
+setInterval(
+  updateCurrentTime,
+  1000
+);
+
+</script>
+
+
+</body>
+
+</html>

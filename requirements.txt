@@ -1,0 +1,5 @@
+Flask>=3.0,<4
+Flask-Cors>=4.0,<7
+gunicorn>=22,<24
+paho-mqtt>=2.1,<3
+psycopg2-binary>=2.9,<3
