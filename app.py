@@ -3,6 +3,13 @@ import json
 import os
 import threading
 import time
+import encodings.idna
+
+# Preload Python's IDNA codec on the main thread before Gunicorn
+# request threads and the MQTT background thread start.
+# This avoids a lazy codec-import race that can cause:
+# LookupError: unknown encoding: idna
+"render.onrender.com".encode("idna")
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from zoneinfo import ZoneInfo
