@@ -233,14 +233,6 @@ body {
 
 .aqi-details strong { color:var(--text); }
 
-.aqi-note {
-  color:var(--text-muted);
-  font-family:var(--mono);
-  font-size:10px;
-  max-width:320px;
-  line-height:1.6;
-  text-align:right;
-}
 
 .sensor-grid {
   display:grid;
@@ -297,7 +289,6 @@ body {
   .site-nav { justify-content:flex-start; flex-wrap:wrap; }
   .sensor-grid { grid-template-columns:repeat(2,1fr); }
   .aqi-card { grid-template-columns:1fr; }
-  .aqi-note { text-align:left; max-width:none; }
 }
 
 @media(max-width:650px) {
@@ -483,12 +474,8 @@ body {
   <div class="aqi-details">
     <div>Dominant pollutant: <strong id="dominantPollutant">--</strong></div>
     <div>Pollutants used: <strong id="pollutantsUsed">--</strong></div>
-    <div>AQI status: <strong id="aqiReady">Waiting for all 4 pollutants</strong></div>
   </div>
 
-  <div class="aqi-note">
-    Current four-pollutant AQI using PM2.5 + PM10 from CPCB and NH₃ + CO from the ESP32 sensor node.
-  </div>
 </div>
 
 <div class="sensor-grid">
@@ -856,7 +843,6 @@ function updateAQICard(hybridAQI) {
   const category = document.getElementById('aqiCategory');
   const dominant = document.getElementById('dominantPollutant');
   const used = document.getElementById('pollutantsUsed');
-  const ready = document.getElementById('aqiReady');
 
   if (
     hybridAQI &&
@@ -876,7 +862,6 @@ function updateAQICard(hybridAQI) {
             .join(', ')
         : '--';
 
-    ready.textContent = 'Available';
 
     const color = getAQIColor(hybridAQI.category);
 
@@ -909,7 +894,6 @@ function updateAQICard(hybridAQI) {
             .join(', ')
         : '--';
 
-    ready.textContent = 'Waiting for all 4 pollutants';
 
     card.style.borderLeftColor = getAQIColor(null);
     value.style.color = 'var(--text)';
