@@ -47,6 +47,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .footer{color:var(--text-muted);font-family:var(--mono);font-size:10px;text-align:center;margin-top:18px;line-height:1.7}
 @media(max-width:900px){.topbar{grid-template-columns:1fr;grid-template-areas:"title" "controls" "nav"}.topbar-right{justify-content:flex-start}.site-nav{justify-content:flex-start;overflow-x:auto}.stats-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){body{padding:14px}.stats-grid,.chart-grid{grid-template-columns:1fr}.range-row{align-items:flex-start;flex-direction:column}}
+
+/* =========================================================
+   NAVIGATION ALIGNMENT
+   Match About page
+   ========================================================= */
+
+.site-nav {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
 </style>
 </head>
 <body>
