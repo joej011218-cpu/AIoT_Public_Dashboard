@@ -422,7 +422,7 @@ body {
 <body>
 
 <div class="topbar">
-  <h1>AIoT Air Quality — Live Node Feed</h1>
+  <h1>AIoT Air Quality — Open-Meteo Live Data</h1>
 
   <nav class="site-nav">
     <a href="index.html" class="active">Live</a>
@@ -430,13 +430,13 @@ body {
     <a href="alerts.html">Alerts</a>
 
     <a
-  href="https://open-meteo-aqi-frontend.onrender.com/prediction.html"
-  target="_blank"
-  rel="noopener noreferrer"
-  class="external"
->
-  CPCB Prediction ↗
-</a>
+      href="https://open-meteo-aqi-frontend.onrender.com/prediction.html"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="external"
+    >
+      CPCB Prediction ↗
+    </a>
 
 <a href="about.html">About</a>
   </nav>
@@ -481,13 +481,13 @@ body {
   </div>
 
   <div class="aqi-details">
-    <div>Dominant pollutant: <strong id="dominantPollutant">--</strong></div>
-    <div>Pollutants used: <strong id="pollutantsUsed">--</strong></div>
-    <div>AQI status: <strong id="aqiReady">Waiting for all 4 pollutants</strong></div>
+    <div>Data source: <strong id="dominantPollutant">Open-Meteo CAMS Global</strong></div>
+    <div>Pollutants used: <strong id="pollutantsUsed">PM2.5, PM10, NO₂, SO₂, CO, O₃</strong></div>
+    <div>AQI status: <strong id="aqiReady">Waiting for Open-Meteo data</strong></div>
   </div>
 
   <div class="aqi-note">
-    Current four-pollutant AQI using PM2.5 + PM10 from CPCB and NH₃ + CO from the ESP32 sensor node.
+    Latest Vadodara air-quality data from Open-Meteo CAMS Global. CPCB-style AQI is calculated by the backend using prescribed rolling averaging periods.
   </div>
 </div>
 
@@ -497,42 +497,42 @@ body {
     <div class="sensor-title">PM2.5</div>
     <div class="sensor-value" id="pm25Value">--</div>
     <div class="sensor-unit">µg/m³</div>
-    <div class="sensor-info">CPCB database · Vadodara</div>
+    <div class="sensor-info">Open-Meteo CAMS Global · Vadodara</div>
   </div>
 
   <div class="sensor-card">
     <div class="sensor-title">PM10</div>
     <div class="sensor-value" id="pm10Value">--</div>
     <div class="sensor-unit">µg/m³</div>
-    <div class="sensor-info">CPCB database · Vadodara</div>
+    <div class="sensor-info">Open-Meteo CAMS Global · Vadodara</div>
+  </div>
+
+  <div class="sensor-card">
+    <div class="sensor-title">Nitrogen Dioxide — NO₂</div>
+    <div class="sensor-value" id="no2Value">--</div>
+    <div class="sensor-unit">µg/m³</div>
+    <div class="sensor-info">Open-Meteo CAMS Global · Vadodara</div>
+  </div>
+
+  <div class="sensor-card">
+    <div class="sensor-title">Sulfur Dioxide — SO₂</div>
+    <div class="sensor-value" id="so2Value">--</div>
+    <div class="sensor-unit">µg/m³</div>
+    <div class="sensor-info">Open-Meteo CAMS Global · Vadodara</div>
   </div>
 
   <div class="sensor-card">
     <div class="sensor-title">Carbon Monoxide — CO</div>
     <div class="sensor-value" id="coValue">--</div>
     <div class="sensor-unit">mg/m³</div>
-    <div class="sensor-info">MQ-7 · 15-minute average</div>
+    <div class="sensor-info">Open-Meteo CAMS Global · Vadodara</div>
   </div>
 
   <div class="sensor-card">
-    <div class="sensor-title">Ammonia — NH₃</div>
-    <div class="sensor-value" id="nh3Value">--</div>
+    <div class="sensor-title">Ozone — O₃</div>
+    <div class="sensor-value" id="o3Value">--</div>
     <div class="sensor-unit">µg/m³</div>
-    <div class="sensor-info">MQ-135 · 15-minute average</div>
-  </div>
-
-  <div class="sensor-card">
-    <div class="sensor-title">Temperature</div>
-    <div class="sensor-value" id="tempValue">--</div>
-    <div class="sensor-unit">°C</div>
-    <div class="sensor-info">DHT11 · 15-minute average</div>
-  </div>
-
-  <div class="sensor-card">
-    <div class="sensor-title">Relative Humidity</div>
-    <div class="sensor-value" id="humidityValue">--</div>
-    <div class="sensor-unit">%</div>
-    <div class="sensor-info">DHT11 · 15-minute average</div>
+    <div class="sensor-info">Open-Meteo CAMS Global · Vadodara</div>
   </div>
 
 </div>
@@ -592,16 +592,15 @@ body {
 </div>
 
 <div class="footer">
-  PM2.5 and PM10 are read from the CPCB Vadodara database.
-  CO and NH₃ are measured by the local MQ-7 and MQ-135 sensor node.
-  Temperature and humidity are measured by DHT11.
-  The displayed Current AQI uses the latest four pollutant readings. Official CPCB AQI uses prescribed averaging periods.
+  PM2.5, PM10, NO₂, SO₂, CO and O₃ are obtained from Open-Meteo CAMS Global for Vadodara.
+  The backend calculates CPCB-style AQI using the appropriate rolling averaging periods.
+  Open-Meteo CAMS values are modeled air-quality data and are not physical CPCB station measurements.
 </div>
 
 <script>
 
-const NODE_ID = 'node1';
-const REFRESH_MS = 30 * 1000;
+const API_BASE = 'https://open-meteo-aqi-dashboard.onrender.com';
+const REFRESH_MS = 60 * 1000;
 
 
 function formatValue(value, decimals) {
@@ -627,28 +626,26 @@ function gridColor() {
 }
 
 function formatSensorTimestamp(value) {
-  if (!value) {
-    return '--';
-  }
+  if (!value) return '--';
 
-  const timestamp = new Date(value);
+  const raw = String(value);
+  const hasZone = /(?:Z|[+-]\d{2}:?\d{2})$/.test(raw);
+  const timestamp = new Date(hasZone ? raw : `${raw}+05:30`);
 
-  if (Number.isNaN(timestamp.getTime())) {
-    return value;
-  }
+  if (Number.isNaN(timestamp.getTime())) return value;
 
-  return timestamp.toLocaleString(
-    'en-GB',
+  return new Intl.DateTimeFormat(
+    'en-IN',
     {
-      day:'2-digit',
-      month:'2-digit',
-      year:'2-digit',
-      hour:'2-digit',
-      minute:'2-digit',
-      second:'2-digit',
-      hour12:true
+      timeZone: 'Asia/Kolkata',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
     }
-  );
+  ).format(timestamp) + ' IST';
 }
 
 function normalizePollutantName(name) {
@@ -850,6 +847,17 @@ function closePrecautionModal() {
 }
 
 
+function getAQICategoryFromValue(aqi) {
+  const value = Number(aqi);
+  if (!Number.isFinite(value)) return null;
+  if (value <= 50) return 'Good';
+  if (value <= 100) return 'Satisfactory';
+  if (value <= 200) return 'Moderate';
+  if (value <= 300) return 'Poor';
+  if (value <= 400) return 'Very Poor';
+  return 'Severe';
+}
+
 function updateAQICard(hybridAQI) {
   const card = document.getElementById('aqiCard');
   const value = document.getElementById('aqiValue');
@@ -933,7 +941,7 @@ async function refreshLatest() {
 
   try {
     const response = await fetch(
-      `/api/latest?node_id=${NODE_ID}`,
+      `${API_BASE}/api/latest`,
       { cache:'no-store' }
     );
 
@@ -944,52 +952,62 @@ async function refreshLatest() {
     const data = await response.json();
 
     document.getElementById('pm25Value').textContent =
-      formatValue(data.pm25_ug_m3, 1);
+      formatValue(data.pm25, 1);
 
     document.getElementById('pm10Value').textContent =
-      formatValue(data.pm10_ug_m3, 1);
+      formatValue(data.pm10, 1);
+
+    document.getElementById('no2Value').textContent =
+      formatValue(data.no2, 1);
+
+    document.getElementById('so2Value').textContent =
+      formatValue(data.so2, 1);
 
     document.getElementById('coValue').textContent =
-      formatValue(data.co_mg_m3, 3);
+      formatValue(data.co, 3);
 
-    document.getElementById('nh3Value').textContent =
-      formatValue(data.nh3_ug_m3, 2);
+    document.getElementById('o3Value').textContent =
+      formatValue(data.o3, 1);
 
-    document.getElementById('tempValue').textContent =
-      formatValue(data.temp, 1);
+    const aqiObject = {
+      ready: data.aqi !== null && data.aqi !== undefined,
+      aqi: data.aqi,
+      category: getAQICategoryFromValue(data.aqi),
+      dominant_pollutant: data.source || 'Open-Meteo CAMS Global',
+      pollutants_used: ['PM2.5','PM10','NO2','SO2','CO','O3']
+    };
 
-    document.getElementById('humidityValue').textContent =
-      formatValue(data.humidity, 1);
+    updateAQICard(aqiObject);
 
-    updateAQICard(data.current_aqi);
+    document.getElementById('dominantPollutant').textContent =
+      data.source || 'Open-Meteo CAMS Global';
+
+    document.getElementById('aqiReady').textContent =
+      aqiObject.ready
+        ? 'CPCB-style AQI available'
+        : 'Waiting for AQI calculation';
 
     if (data.timestamp) {
-      const timestamp = new Date(data.timestamp);
-      const age = Date.now() - timestamp.getTime();
-      const stale = age > 20 * 60 * 1000;
       const formatted = formatSensorTimestamp(data.timestamp);
 
       document.getElementById('lastUpdated').textContent =
-        stale
-          ? `Last sensor reading · ${formatted}`
-          : `Live sensor · ${formatted}`;
+        `Latest Open-Meteo hour · ${formatted}`;
 
       dot.classList.remove('online','offline');
-      dot.classList.add(stale ? 'offline' : 'online');
-    }
-    else {
+      dot.classList.add('online');
+    } else {
       document.getElementById('lastUpdated').textContent =
-        'Waiting for sensor data';
+        'Waiting for Open-Meteo data';
 
       dot.classList.remove('online');
       dot.classList.add('offline');
     }
   }
   catch (error) {
-    console.error('Latest reading error:', error);
+    console.error('Open-Meteo latest reading error:', error);
 
     document.getElementById('lastUpdated').textContent =
-      'Backend connection error';
+      'Open-Meteo backend connection error';
 
     dot.classList.remove('online');
     dot.classList.add('offline');
